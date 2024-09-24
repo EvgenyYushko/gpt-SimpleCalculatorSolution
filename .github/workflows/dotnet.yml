@@ -1,0 +1,35 @@
+name: .NET
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '4.8.x'
+
+    - name: Restore dependencies
+      run: dotnet restore SimpleCalculatorSolution.sln
+
+    - name: Build solution
+      run: dotnet build SimpleCalculatorSolution.sln --configuration Release --no-restore
+
+    - name: Run unit tests
+      run: dotnet test SimpleCalculator.Tests/SimpleCalculator.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=test_results.trx"
+
+    - name: Publish test results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-results
+        path: '**/TestResults/*.trx'

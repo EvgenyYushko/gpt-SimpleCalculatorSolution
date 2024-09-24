@@ -1,3 +1,10 @@
 Create a .NET 4.8 console application with a simple calculator that supports addition, subtraction, multiplication, and division. Ensure that the project follows SOLID principles and includes a solution file (.sln).
 Write unit tests for the Calculator class in C# using NUnit to test all basic operations (addition, subtraction, multiplication, and division).
 Generate OpenAPI documentation for the ASP.NET Core Web API project.
+
+Create a GitHub Actions workflow file (.yml) for a .NET 4.8 project with a solution file (.sln). The workflow should run on every push to the "master" branch. It should:
+1. Restore dependencies.
+2. Build the solution.
+3. Run unit tests using NUnit.
+Ensure that the workflow installs the appropriate version of .NET and publishes the test results as an artifact.
+
