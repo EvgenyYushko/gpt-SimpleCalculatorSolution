@@ -18,14 +18,23 @@ jobs:
       with:
         dotnet-version: '5.0.x'
 
+    - name: Install SonarCloud scanner
+      run: dotnet tool install --global dotnet-sonarscanner
+
     - name: Restore dependencies
       run: dotnet restore SimpleCalculatorSolution.sln
+
+    - name: Run SonarCloud analysis
+      run: dotnet sonarscanner begin /k:"EvgenyYushko_gpt-SimpleCalculatorSolution" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
     - name: Build solution
       run: dotnet build SimpleCalculatorSolution.sln --configuration Release --no-restore
 
     - name: Run unit tests
       run: dotnet test SimpleCalculator.Tests/SimpleCalculator.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=test_results.trx"
+
+    - name: End SonarCloud analysis
+      run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
     - name: Publish test results
       if: always()
