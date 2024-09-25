@@ -25,7 +25,7 @@ jobs:
       run: dotnet restore SimpleCalculatorSolution.sln
     
     - name: Run SonarCloud analysis
-      run: dotnet sonarscanner begin /k:"EvgenyYushko_gpt-SimpleCalculatorSolution" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      run: dotnet sonarscanner begin /k:"EvgenyYushko_gpt-SimpleCalculatorSolution" /o:"evgenyyushko" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
     - name: Build solution
       run: dotnet build SimpleCalculatorSolution.sln --configuration Release --no-restore
