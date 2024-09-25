@@ -23,7 +23,7 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore SimpleCalculatorSolution.sln
-
+    
     - name: Run SonarCloud analysis
       run: dotnet sonarscanner begin /k:"EvgenyYushko_gpt-SimpleCalculatorSolution" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
