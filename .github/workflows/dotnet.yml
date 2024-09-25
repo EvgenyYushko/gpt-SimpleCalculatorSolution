@@ -23,7 +23,7 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore SimpleCalculatorSolution.sln
-    
+     
     - name: Run SonarCloud analysis
       run: dotnet sonarscanner begin /k:"EvgenyYushko_gpt-SimpleCalculatorSolution" /o:"evgenyyushko" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
@@ -43,11 +43,25 @@ jobs:
         name: test-results
         path: '**/TestResults/*.trx'
 
-    - name: Send Telegram Message
-      if: success()
-      run: |
-        curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} -d text="✅ Build and tests passed successfully for ${{ github.repository }} on branch ${{ github.ref }}"
+    # Вывод содержимого файла в консоль
+    #- name: Print test results file
+    #  run: cat ./SimpleCalculator.Tests/TestResults/test_results.trx
 
+    - name: Parse and send test results
+      if: success()
+      shell: pwsh
+      run: |
+        [xml]$xml = Get-Content './SimpleCalculator.Tests/TestResults/test_results.trx'
+        $passed = $xml.TestRun.Results.UnitTestResult | Where-Object { $_.outcome -eq 'Passed' } | Measure-Object | Select-Object -ExpandProperty Count
+        $failed = $xml.TestRun.Results.UnitTestResult | Where-Object { $_.outcome -eq 'Failed' } | Measure-Object | Select-Object -ExpandProperty Count
+        $total = $xml.TestRun.Results.UnitTestResult.Count
+        curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage `
+        -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} `
+        -d text="✅ Build and tests passed successfully for ${{ github.repository }} on branch ${{ github.ref }}. Tests passed: $passed/$total, failed: $failed.
+         Commit: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+         Author: ${{ github.actor }}
+         Message: ${{ github.event.head_commit.message }}"         
+        
     - name: Send failure message to Telegram
       if: failure()
       run: |
