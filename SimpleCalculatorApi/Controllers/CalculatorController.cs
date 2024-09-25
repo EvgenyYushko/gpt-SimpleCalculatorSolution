@@ -15,12 +15,14 @@ namespace SimpleCalculatorApi.Controllers
 		private readonly IEnumerable<ICalculatorOperation> _operations;
 		private readonly Calculator _calculator;
 
+		// Конструктор контроллера принимает операции и калькулятор
 		public CalculatorController(IEnumerable<ICalculatorOperation> operations, Calculator calculator)
 		{
 			_operations = operations;
 			_calculator = calculator;
 		}
 
+		// Метод для сложения двух чисел
 		[HttpGet("add")]
 		public IActionResult Add(double a, double b)
 		{
@@ -30,6 +32,7 @@ namespace SimpleCalculatorApi.Controllers
 			return Ok(_calculator.Calculate(a, b, operation));
 		}
 
+		// Метод для вычитания двух чисел
 		[HttpGet("subtract")]
 		public IActionResult Subtract(double a, double b)
 		{
@@ -39,6 +42,7 @@ namespace SimpleCalculatorApi.Controllers
 			return Ok(_calculator.Calculate(a, b, operation));
 		}
 
+		// Метод для умножения двух чисел
 		[HttpGet("multiply")]
 		public IActionResult Multiply(double a, double b)
 		{
@@ -48,6 +52,7 @@ namespace SimpleCalculatorApi.Controllers
 			return Ok(_calculator.Calculate(a, b, operation));
 		}
 
+		// Метод для деления двух чисел
 		[HttpGet("divide")]
 		public IActionResult Divide(double a, double b)
 		{

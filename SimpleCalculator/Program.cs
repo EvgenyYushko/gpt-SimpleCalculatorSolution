@@ -29,6 +29,7 @@ namespace SimpleCalculator
 			Console.WriteLine("Enter operation (+, -, *, /):");
 			string operationSymbol = Console.ReadLine();
 
+			// Определение операции на основе введенного символа
 			ICalculatorOperation operation = operationSymbol switch
 			{
 				"+" => serviceProvider.GetService<ICalculatorOperation>(),
