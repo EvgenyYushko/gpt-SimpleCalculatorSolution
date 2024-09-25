@@ -42,3 +42,19 @@ jobs:
       with:
         name: test-results
         path: '**/TestResults/*.trx'
+
+    # Шаг для отправки уведомления в Telegram при успешном билде
+    - name: Send success message to Telegram
+      if: success()
+      run: |
+        curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+        -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+        -d "text=✅ Build and tests passed successfully for ${{ github.repository }} on branch ${{ github.ref }}"
+
+  # Шаг для отправки уведомления в Telegram при ошибке
+    - name: Send failure message to Telegram
+      if: failure()
+      run: |
+        curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+        -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+        -d "text=❌ Build or tests failed for ${{ github.repository }} on branch ${{ github.ref }}"
