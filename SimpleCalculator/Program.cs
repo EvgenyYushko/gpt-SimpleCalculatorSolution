@@ -1,4 +1,7 @@
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using SimpleCalculator.Interfaces;
+using SimpleCalculator.Operations;
 
 namespace SimpleCalculator
 {
@@ -6,6 +9,17 @@ namespace SimpleCalculator
     {
         static void Main(string[] args)
         {
+            // Setup DI
+            var serviceProvider = new ServiceCollection()
+                .AddTransient<ICalculatorOperation, Addition>()
+                .AddTransient<ICalculatorOperation, Subtraction>()
+                .AddTransient<ICalculatorOperation, Multiplication>()
+                .AddTransient<ICalculatorOperation, Division>()
+                .AddTransient<Calculator>()
+                .BuildServiceProvider();
+
+            var calculator = serviceProvider.GetService<Calculator>();
+
             Console.WriteLine("Simple Calculator");
             Console.WriteLine("Enter first number:");
             double a = Convert.ToDouble(Console.ReadLine());
@@ -14,21 +28,30 @@ namespace SimpleCalculator
             double b = Convert.ToDouble(Console.ReadLine());
 
             Console.WriteLine("Enter operation (+, -, *, /):");
-            string operation = Console.ReadLine();
+            string operationSymbol = Console.ReadLine();
 
-            ICalculatorOperation calculatorOperation = operation switch
+            ICalculatorOperation operation = operationSymbol switch
             {
-                "+" => new Operations.Addition(),
-                "-" => new Operations.Subtraction(),
-                "*" => new Operations.Multiplication(),
-                "/" => new Operations.Division(),
+                "+" => serviceProvider.GetService<ICalculatorOperation>(),
+                "-" => serviceProvider.GetService<ICalculatorOperation>(),
+                "*" => serviceProvider.GetService<ICalculatorOperation>(),
+                "/" => serviceProvider.GetService<ICalculatorOperation>(),
                 _ => throw new InvalidOperationException("Invalid operation")
             };
 
-            Calculator calculator = new Calculator(calculatorOperation);
-            double result = calculator.Calculate(a, b);
-
-            Console.WriteLine($"Result: {result}");
+            try
+            {
+                double result = calculator.Calculate(a, b, operation);
+                Console.WriteLine($"Result: {result}");
+            }
+            catch (DivideByZeroException)
+            {
+                Console.WriteLine("Error: Division by zero is not allowed.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
     }
 }

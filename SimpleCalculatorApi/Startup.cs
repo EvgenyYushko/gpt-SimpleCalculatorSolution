@@ -5,6 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using SimpleCalculator;
+using SimpleCalculator.Interfaces;
+using SimpleCalculator.Operations;
 
 namespace SimpleCalculatorApi
 {
@@ -20,6 +23,15 @@ namespace SimpleCalculatorApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // Register calculator operations
+            services.AddTransient<ICalculatorOperation, Addition>();
+            services.AddTransient<ICalculatorOperation, Subtraction>();
+            services.AddTransient<ICalculatorOperation, Multiplication>();
+            services.AddTransient<ICalculatorOperation, Division>();
+
+            // Register calculator
+            services.AddTransient<Calculator>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>

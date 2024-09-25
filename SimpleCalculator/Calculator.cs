@@ -4,16 +4,9 @@ namespace SimpleCalculator
 {
     public class Calculator
     {
-        private readonly ICalculatorOperation _operation;
-
-        public Calculator(ICalculatorOperation operation)
+        public double Calculate(double a, double b, ICalculatorOperation operation)
         {
-            _operation = operation;
-        }
-
-        public double Calculate(double a, double b)
-        {
-            return _operation.Operate(a, b);
+            return operation.Operate(a, b);
         }
     }
 }
