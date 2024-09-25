@@ -1,4 +1,7 @@
-public interface ICalculatorOperation
+namespace SimpleCalculator
 {
-    double Operate(double a, double b);
+	public interface ICalculatorOperation
+	{
+		double Operate(double a, double b);
+	}
 }
